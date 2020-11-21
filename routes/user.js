@@ -5,14 +5,15 @@ const express = require('express'),
 var exhibitDB = require('../config/dbconfig');
 
 // Getting all the usernames of registered users
+// More for debugging. Don't think this has baring on the project. 
 router.get('/all-users', function(req, res){
     let sql = 'SELECT username FROM user';
-    exhibitDB.query(sql, function(err, data, fields){
+    exhibitDB.query(sql, function(err, users, fields){
         if(err) throw err;
         res.json({
             status: 200,
-            data,
-            message: "User list retrieved successfully"
+            // users is a json array of the results of the query
+            users
         })
     })
 });
@@ -24,7 +25,6 @@ router.post('/add-user', function(req, res){
     var password = req.body.password;
     // Password encryption. Excrypted password is then stored into database
     bcrypt.hash(password, 5).then(hash => {
-        console.log(`Hash ${hash}`);
         let values = [
             username,
             hash
@@ -32,24 +32,27 @@ router.post('/add-user', function(req, res){
         exhibitDB.query(sql, values, function(err, data, fields){
             if(err) throw err;
             res.json({
-                status: 200,
-                message: `Added ${req.body.username} into the database`
+                status: 200
+                // Added for debugging purposes
+                // message: `Added ${req.body.username} into the database`
             })
         })
     }).catch(err => console.error(err.message));
 });
 
+// Validating login credentials
 router.post('/login', function(req, res){
     var username = req.body.username;
-    console.log(username);
     var password = req.body.password;
-    console.log(password);
     let sql = 'SELECT * FROM user WHERE username = (?)';
 
-    var user = exhibitDB.query(sql, username, function(err, data, fields){
+    exhibitDB.query(sql, username, function(err, data, fields){
         if(err) throw err;
-        console.log(data);
-        console.log(data[0].username);
+        bcrypt.compare(password, data[0].password).then(
+            res.json({
+                "status": 200
+            })
+        ).catch(err => console.error(err.message));
     })
 });
 

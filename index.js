@@ -9,13 +9,10 @@ var server = {
 };
 
 app.use(cors());
+// When grabbing json
 app.use(bodyParser.json());
 app.use('/user', usersRouter);
 
-app.listen(server.port, () =>
+app.listen(server.port, function(){
     console.log(`Server started, listening port: ${server.port}`)
-);
-
-app.get('/', function(req, res){
-    res.sendFile(__dirname + "/" + "TestPage.html");
 });

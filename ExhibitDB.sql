@@ -27,13 +27,13 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`Event` (
     `address` VARCHAR(200) NOT NULL,
     `city` VARCHAR(200) NOT NULL,
     `approved` TINYINT NOT NULL DEFAULT 0,
-    `host_id` VARCHAR(200) NOT NULL,
+    `host_username` VARCHAR(200) NOT NULL,
     `event_id` INT NOT NULL AUTO_INCREMENT,
 
     PRIMARY KEY(`title`, `start_date`, `address`, `city`),
     INDEX(`event_id`),
-    CONSTRAINT `HostID_Event`
-        FOREIGN KEY (`host_id`)
+    CONSTRAINT `HostUsername_Event`
+        FOREIGN KEY (`host_username`)
         REFERENCES `ExhibitDB`.`User` (`username`)
         ON DELETE CASCADE
         ON UPDATE NO ACTION
@@ -43,12 +43,12 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`Event` (
 -- Table `ExhibitDB`.`EventAttendee`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ExhibitDB`.`EventAttendee` (
-    `user_id` VARCHAR(200) NOT NULL,
+    `user_username` VARCHAR(200) NOT NULL,
     `event_id` INT NOT NULL,
 
-    PRIMARY KEY(`user_id`, `event_id`),
-    CONSTRAINT `UserID_EventAttendee`
-        FOREIGN KEY (`user_id`)
+    PRIMARY KEY(`user_username`, `event_id`),
+    CONSTRAINT `user_username_EventAttendee`
+        FOREIGN KEY (`user_username`)
         REFERENCES `ExhibitDB`.`User` (`username`)
         ON DELETE CASCADE
         ON UPDATE NO ACTION,
@@ -65,17 +65,17 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`EventAttendee` (
 CREATE TABLE IF NOT EXISTS `ExhibitDB`.`EventReview` (
     `rating` INT NULL,
     `comment` TEXT(1000) NULL,
-    `commenter_id` VARCHAR(200) NOT NULL,
+    `commenter_username` VARCHAR(200) NOT NULL,
     `event_id` INT NOT NULL,
 
-    PRIMARY KEY(`commenter_id`, `event_id`),
+    PRIMARY KEY(`commenter_username`, `event_id`),
     CONSTRAINT `EventID_EventReview`
         FOREIGN KEY (`event_id`)
         REFERENCES `ExhibitDB`.`Event` (`event_id`)
         ON DELETE CASCADE
         ON UPDATE NO ACTION,
-    CONSTRAINT `CommenterID_EventReview`
-        FOREIGN KEY (`commenter_id`)
+    CONSTRAINT `Commenter_username_EventReview`
+        FOREIGN KEY (`commenter_username`)
         REFERENCES `ExhibitDB`.`User` (`username`)
         ON DELETE CASCADE
         ON UPDATE NO ACTION

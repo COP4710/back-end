@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`Event` (
     `end_date` DATE NOT NULL,
     `address` VARCHAR(200) NOT NULL,
     `city` VARCHAR(200) NOT NULL,
-    `approved` TINYINT NOT NULL DEFAULT 0,
     `host_username` VARCHAR(200) NOT NULL,
     `event_id` INT NOT NULL AUTO_INCREMENT,
 

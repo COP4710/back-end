@@ -25,11 +25,12 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`Event` (
     `start_date` DATE NOT NULL,
     `end_date` DATE NOT NULL,
     `address` VARCHAR(200) NOT NULL,
+    `city` VARCHAR(200) NOT NULL,
     `approved` TINYINT NOT NULL DEFAULT 0,
     `host_id` VARCHAR(200) NOT NULL,
     `event_id` INT NOT NULL AUTO_INCREMENT,
 
-    PRIMARY KEY(`title`, `start_date`, `address`),
+    PRIMARY KEY(`title`, `start_date`, `address`, `city`),
     INDEX(`event_id`),
     CONSTRAINT `HostID_Event`
         FOREIGN KEY (`host_id`)

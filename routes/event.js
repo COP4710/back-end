@@ -27,7 +27,7 @@ router.post('/add-event', function(req, res){
     ];
 
     //SQL query to see if there are any conflicts with another event in the database
-    let sqlCheck = 'SELECT * FROM `exhibitdb`.`event` WHERE `city` = (?) AND `address` = (?) AND `start_date` = (?) AND `end_date` = (?)';
+    let sqlCheck = 'SELECT * FROM `exhibitdb`.`event` WHERE `city` = (?) AND `address` = (?) AND ((?) <= `end_date` AND (?) >= `start_date`)';
     let values2 = [
         city,
         address,
@@ -38,6 +38,7 @@ router.post('/add-event', function(req, res){
     //Checks if there is any conflicts and returns a dissaproval message if there is
     exhibitDB.query(sqlCheck, values2, function(err, data, fields){
         if (err) throw err;
+        console.log(data);
         if (data.length > 0)
         {
             res.json({

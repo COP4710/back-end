@@ -3,6 +3,7 @@ const express = require('express'),
 
 var exhibitDB = require('../config/dbconfig');
 
+//Adds an event
 router.post('/add-event', function(req, res){
     var title = req.body.title;
     var description = req.body.description;
@@ -11,10 +12,10 @@ router.post('/add-event', function(req, res){
     var end_date = req.body.end_date;
     var address = req.body.address;
     var city = req.body.city;
-    var host_id = req.body.host_id;
+    var host_username = req.body.host_username;
 
     //SQL query to insert all the data for adding an event to the database
-    let sql = 'INSERT INTO `exhibitdb`.`event` (`title`, `description`, `event_homepage`, `start_date`, `end_date`, `address`, `city`, `host_id`) VALUES (?,?,?,?,?,?,?,?)';
+    let sql = 'INSERT INTO `exhibitdb`.`event` (`title`, `description`, `event_homepage`, `start_date`, `end_date`, `address`, `city`, `host_username`) VALUES (?,?,?,?,?,?,?,?)';
     let values = [
         title,
         description,
@@ -23,7 +24,7 @@ router.post('/add-event', function(req, res){
         end_date,
         address,
         city,
-        host_id
+        host_username
     ];
 
     //SQL query to see if there are any conflicts with another event in the database
@@ -38,6 +39,7 @@ router.post('/add-event', function(req, res){
     //Checks if there is any conflicts and returns a dissaproval message if there is
     exhibitDB.query(sqlCheck, values2, function(err, data, fields){
         if (err) throw err;
+        console.log(data);
         if (data.length > 0)
         {
             res.json({
@@ -57,6 +59,33 @@ router.post('/add-event', function(req, res){
             })
         }
     })
+});
+
+//Adds user to list attending a certain event
+router.post('/join-event', function(req, res){
+    var event_id = req.body.event_id;
+    var user_id = req.body.user_id;
+    let sql = "INSERT INTO `exhibitdb`.`eventattendee` (`user_username, event_id`) VALUES (?,?)";
+
+    exhibitDB.query(sql, function(err, data, fields){
+        if (err) throw err;
+        res.json({
+            "status": 200
+        })
+    });
+});
+
+//Deletes an event
+router.post('/delete-event', function(req, res){
+    var event_id = req.body.event_id;
+    let sql = "DELETE FROM exhibitdb`.`event` WHERE event_id = (?)";
+    
+    exhibitDB.query(sql, event_id, function(err, data, fields){
+        if (err) throw err;
+        res.json({
+            "status": 200
+        })
+    });
 });
 
 module.exports = router;

@@ -7,7 +7,7 @@ var exhibitDB = require('../config/dbconfig');
 // Getting all the usernames of registered users
 // More for debugging. Don't think this has baring on the project. 
 router.get('/all-users', function(req, res){
-    let sql = 'SELECT username FROM user';
+    let sql = "SELECT username FROM user";
     exhibitDB.query(sql, function(err, users, fields){
         if(err) throw err;
         res.json({
@@ -20,7 +20,7 @@ router.get('/all-users', function(req, res){
 
 // For creating a new user
 router.post('/add-user', function(req, res){
-    let sql = 'INSERT INTO `exhibitdb`.`user` (`username`, `password`) VALUES (?,?)';
+    let sql = "INSERT INTO user (username, password) VALUES (?,?)";
     var username = req.body.username;
     var password = req.body.password;
     // Password encryption. Excrypted password is then stored into database
@@ -33,8 +33,6 @@ router.post('/add-user', function(req, res){
             if(err) throw err;
             res.json({
                 status: 200
-                // Added for debugging purposes
-                // message: `Added ${req.body.username} into the database`
             })
         })
     }).catch(err => console.error(err.message));
@@ -44,7 +42,7 @@ router.post('/add-user', function(req, res){
 router.post('/login', function(req, res){
     var username = req.body.username;
     var password = req.body.password;
-    let sql = 'SELECT * FROM user WHERE username = (?)';
+    let sql = "SELECT * FROM user WHERE username = (?)";
 
     exhibitDB.query(sql, username, function(err, data, fields){
         if(err) throw err;

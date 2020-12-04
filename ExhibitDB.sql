@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`Event` (
     `host_username` VARCHAR(200) NOT NULL,
     `event_id` INT NOT NULL AUTO_INCREMENT,
 
-    PRIMARY KEY(`title`, `start_date`, `address`, `city`),
+    PRIMARY KEY(`title`, `start_date`, `address`, `city`, `event_id`),
     INDEX(`event_id`),
     CONSTRAINT `HostUsername_Event`
         FOREIGN KEY (`host_username`)
@@ -54,28 +54,6 @@ CREATE TABLE IF NOT EXISTS `ExhibitDB`.`EventAttendee` (
     CONSTRAINT `EventID_EventAttendee`
         FOREIGN KEY (`event_id`)
         REFERENCES `ExhibitDB`.`Event` (`event_id`)
-        ON DELETE CASCADE
-        ON UPDATE NO ACTION
-);
-
--- -----------------------------------------------------
--- Table `ExhibitDB`.`EventReview`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ExhibitDB`.`EventReview` (
-    `rating` INT NULL,
-    `comment` TEXT(1000) NULL,
-    `commenter_username` VARCHAR(200) NOT NULL,
-    `event_id` INT NOT NULL,
-
-    PRIMARY KEY(`commenter_username`, `event_id`),
-    CONSTRAINT `EventID_EventReview`
-        FOREIGN KEY (`event_id`)
-        REFERENCES `ExhibitDB`.`Event` (`event_id`)
-        ON DELETE CASCADE
-        ON UPDATE NO ACTION,
-    CONSTRAINT `Commenter_username_EventReview`
-        FOREIGN KEY (`commenter_username`)
-        REFERENCES `ExhibitDB`.`User` (`username`)
         ON DELETE CASCADE
         ON UPDATE NO ACTION
 );

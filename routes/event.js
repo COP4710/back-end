@@ -169,34 +169,5 @@ router.post('/search-admin', function(req, res){
     });
 });
 
-// returns a list that user has participated in 
-
-// router.post('/search-user', function(req, res){
-//     var user_username = req.body.user_username; 
-  
-//     let sql = 'SELECT * FROM `exhibitdb`.`eventattendee` WHERE `user_username` = (?)';
-   
-
-//     exhibitDB.query(sql, user_username, function(err, data, fields){
-//         if (err) throw err;
-
-//         result = [];
-
-//         // for (let i = 0; i< data.length; i++){ 
-//         //     let sql = 'SELECT `title` FROM `exhibitdb`.`event` WHERE `event_id` = (?)';
-
-//         //     exhibitDB.query(sql, user_username, function(err, data, fields){
-//         //         if (err) throw err;
-//         //         result.push(data);
-//         //     });
-
-//         //     }
-      
-//         res.json({
-//             "status": 200 ,  
-//              result
-//         })
-//     });
-// });
 
 module.exports = router;

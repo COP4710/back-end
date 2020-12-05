@@ -66,9 +66,14 @@ router.post('/add-event', function(req, res){
 router.post('/join-event', function(req, res){
     var event_id = req.body.event_id;
     var user_username = req.body.user_username;
-    let sql = "INSERT INTO `exhibitdb`.`eventattendee` (`user_username, event_id`) VALUES (?,?)";
+    let sql = "INSERT INTO `exhibitdb`.`eventattendee` (user_username, event_id) VALUES (?,?)";
 
-    exhibitDB.query(sql, function(err, data, fields){
+    let values = [
+        user_username,
+        event_id
+    ]
+
+    exhibitDB.query(sql, values, function(err, data, fields){
         if (err) throw err;
         res.json({
             "status": 200
@@ -171,32 +176,18 @@ router.post('/search-admin', function(req, res){
 
 // returns a list that user has participated in 
 
-// router.post('/search-user', function(req, res){
-//     var user_username = req.body.user_username; 
+router.post('/search-user', function(req, res){
+    var user_username = req.body.user_username; 
   
-//     let sql = 'SELECT * FROM `exhibitdb`.`eventattendee` WHERE `user_username` = (?)';
+    let sql = "SELECT title FROM event e, eventattendee WHERE eventattendee.user_username = (?) AND e.event_id = eventattendee.event_id";
    
 
-//     exhibitDB.query(sql, user_username, function(err, data, fields){
-//         if (err) throw err;
-
-//         result = [];
-
-//         // for (let i = 0; i< data.length; i++){ 
-//         //     let sql = 'SELECT `title` FROM `exhibitdb`.`event` WHERE `event_id` = (?)';
-
-//         //     exhibitDB.query(sql, user_username, function(err, data, fields){
-//         //         if (err) throw err;
-//         //         result.push(data);
-//         //     });
-
-//         //     }
-      
-//         res.json({
-//             "status": 200 ,  
-//              result
-//         })
-//     });
-// });
+    exhibitDB.query(sql, user_username, function(err, data, fields){
+        res.json({
+            "status": 200,
+             data
+        })
+    });
+});
 
 module.exports = router;

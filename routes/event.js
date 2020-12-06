@@ -94,8 +94,7 @@ router.post('/delete-event', function(req, res){
     });
 });
 
-// filtering  an event by date 
-
+// Filtering  an event by date 
 router.post('/filter-date', function(req, res){
     var start_date = req.body.start_date; 
     var end_date = req.body.end_date; 
@@ -110,20 +109,9 @@ router.post('/filter-date', function(req, res){
     exhibitDB.query(sql, values, function(err, data, fields){
         if (err) throw err;
 
-        result = [];
-
-        for (let i = 0; i< data.length; i++){ 
-            
-            var element = { 
-                title:data[i].title,
-                event_homepage:data[i].event_homepage
-            }
-            result.push(element);
-        }
-
         res.json({
             "status": 200 ,
-            result
+            data
         })
     });
 });
@@ -131,57 +119,41 @@ router.post('/filter-date', function(req, res){
 // Filter Event by city 
 router.post('/filter-city', function(req, res){
     var city = req.body.city; 
-  
 
     let sql = 'SELECT * FROM `exhibitdb`.`event` WHERE `city` = (?)';
-
-
+    
     exhibitDB.query(sql, city, function(err, data, fields){
         if (err) throw err;
-        result = [];
 
-       for (let i = 0; i< data.length; i++){ 
-           var element = { 
-               title:data[i].title,
-               event_homepage:data[i].event_homepage
-           }
-           result.push(element);
-       }
-  
-        
         res.json({
-            "status": 200 ,
-            result
+            "status": 200,
+            data
         })
     });
 });
 
-// Returns list of events an admin has hosted 
+//Returns list of events an admin has hosted 
 router.post('/search-admin', function(req, res){
     var host_username = req.body.host_username; 
-  
 
     let sql = 'SELECT * FROM `exhibitdb`.`event` WHERE `host_username` = (?)';
-
 
     exhibitDB.query(sql, host_username, function(err, data, fields){
         if (err) throw err;
       
         res.json({
-            "status": 200 ,
+            "status": 200,
              data
         })
     });
 });
 
-// returns a list that user has participated in 
-
+// Returns a list that user has participated in 
 router.post('/search-user', function(req, res){
     var user_username = req.body.user_username; 
   
-    let sql = "SELECT title FROM event e, eventattendee WHERE eventattendee.user_username = (?) AND e.event_id = eventattendee.event_id";
+    let sql = "SELECT * FROM event e, eventattendee WHERE eventattendee.user_username = (?) AND e.event_id = eventattendee.event_id";
    
-
     exhibitDB.query(sql, user_username, function(err, data, fields){
         res.json({
             "status": 200,

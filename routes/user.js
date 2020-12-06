@@ -2,57 +2,92 @@ const express = require('express'),
     router = express.Router(),
     bcrypt = require('bcrypt');
 
+const { constants } = require('buffer');
 var exhibitDB = require('../config/dbconfig');
-
-// Getting all the usernames of registered users
-// More for debugging. Don't think this has baring on the project. 
-router.get('/all-users', function(req, res){
-    let sql = "SELECT username FROM user";
-    exhibitDB.query(sql, function(err, users, fields){
-        if(err) throw err;
-        res.json({
-            status: 200,
-            // users is a json array of the results of the query
-            users
-        })
-    })
-});
+const saltRounds = 10;
 
 // For creating a new user
-router.post('/add-user', function(req, res){
-    let sql = "INSERT INTO user (username, password) VALUES (?,?)";
-    var username = req.body.username;
-    var password = req.body.password;
-    // Password encryption. Excrypted password is then stored into database
-    bcrypt.hash(password, 5).then(hash => {
+router.post('/add-user', async function (req, res) {
+    let sql = "INSERT INTO user (username, password) VALUES (?, ?)";
+    try{
+        var username = req.body.username;
+        // Password encryption. Excrypted password is then stored into database
+        const hashedPwd = await bcrypt.hash(req.body.password, saltRounds);
         let values = [
             username,
-            hash
-        ];
-        exhibitDB.query(sql, values, function(err, data, fields){
-            if(err) throw err;
-            res.json({
-                status: 200
-            })
+            hashedPwd
+        ]
+
+        exhibitDB.query(sql, values, function(err, data, fields) {
+            if(!err){
+                res.json({
+                    status: 200,
+                    message: "Added"
+                })
+            }
+            else{
+                res.json({
+                    status: 400,
+                    message: err.sqlMessage
+                })
+            }
         })
-    }).catch(err => console.error(err.message));
+    }
+    catch(error){
+        res.json({
+            status: 500
+        })
+    }
 });
 
 // Validating login credentials
-router.post('/login', function(req, res){
+router.post('/login', async function(req, res){
     var username = req.body.username;
     var password = req.body.password;
-    let sql = "SELECT * FROM user WHERE username = (?)";
+    let sql = "SELECT password, role FROM user WHERE username = (?)";
 
-    exhibitDB.query(sql, username, function(err, data, fields){
-        if(err) throw err;
-        bcrypt.compare(password, data[0].password).then(
-            res.json({
-                "status": 200,
-                "user_role": data[0].role
-            })
-        ).catch(err => console.error(err.message));
-    })
+    try {
+        exhibitDB.query(sql, username, async function(err, data, fields){
+            if(err){
+                res.json({
+                    status: 500
+                })
+            }
+            // If something was returned from the query, explicitly at least one thing, then we can validate the password
+            else if(typeof data[0] !== 'undefined'){
+                var userpassword = data[0].password;
+
+                if(userpassword !== null){
+                    var cmp  = await bcrypt.compare(password, userpassword);
+                    if(cmp){
+                        res.json({
+                            status: 200,
+                            role: data[0].role,
+                            message: "Login Successful"
+                        })
+                    }
+                    else{
+                        res.json({
+                            status: 400,
+                            message: "Your username or password is incorrect"
+                        })
+                    }
+                }
+            }
+            // If nothing was returned from the database, this means the username is not in the db, aka not registered
+            else{
+                res.json({
+                    status: 400,
+                    message: "Your username or password is incorrect"
+                })
+            }
+        });
+    }
+    catch(error) {
+        res.json({
+            status: 500
+        })
+    }
 });
 
 module.exports = router;

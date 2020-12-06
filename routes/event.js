@@ -84,7 +84,7 @@ router.post('/join-event', function(req, res){
 //Deletes an event
 router.post('/delete-event', function(req, res){
     var event_id = req.body.event_id;
-    let sql = "DELETE FROM exhibitdb`.`event` WHERE event_id = (?)";
+    let sql = "DELETE FROM `exhibitdb`.`event` WHERE event_id = (?)";
     
     exhibitDB.query(sql, event_id, function(err, data, fields){
         if (err) throw err;
